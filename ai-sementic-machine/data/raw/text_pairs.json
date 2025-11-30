@@ -1,0 +1,22 @@
+[
+  {
+    "anchor": "Mage wallet eka nathi una", 
+    "positive": "Black leather wallet found near library"
+  },
+  {
+    "anchor": "Blue ID card", 
+    "positive": "Student ID card belonging to Kamal"
+  },
+  {
+    "anchor": "Rathu pata umbrella", 
+    "positive": "Red folding umbrella"
+  },
+  {
+    "anchor": "Kalu pata bag eka", 
+    "positive": "Black laptop backpack"
+  },
+  {
+    "anchor": "Lost my 4n", 
+    "positive": "Samsung Galaxy mobile phone found in canteen"
+  }
+]

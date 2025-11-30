@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sentence-transformers
+torch
+faiss-cpu
+numpy
+pandas
+scikit-learn
+pydantic
