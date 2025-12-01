@@ -1,0 +1,24 @@
+{
+  "relationships": [
+    {
+      "source": "Wallet",
+      "related": ["ID Card", "Credit Card", "Cash", "Driver License"]
+    },
+    {
+      "source": "Bag",
+      "related": ["Laptop", "Books", "Wallet", "Phone", "Keys"]
+    },
+    {
+      "source": "Phone",
+      "related": ["SIM Card", "Memory Card", "Charger", "Phone Case"]
+    },
+    {
+      "source": "Keys",
+      "related": ["Key Chain", "Remote", "USB Drive"]
+    },
+    {
+      "source": "Laptop",
+      "related": ["Laptop Charger", "Mouse", "Bag", "USB Drive"]
+    }
+  ]
+}
