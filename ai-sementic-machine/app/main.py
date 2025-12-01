@@ -1,21 +1,16 @@
 from fastapi import FastAPI
-from typing import List
-from .engine import SemanticEngine
-from .schemas import ItemCreate, SearchQuery, SearchResult
+from app.api import routes
+from app.config import settings
 
-app = FastAPI(title="Lost & Found Semantic Engine")
-engine = SemanticEngine()
+app = FastAPI(title=settings.PROJECT_NAME)
+
+# Include API Routes
+app.include_router(routes.router)
 
 @app.get("/")
-def home():
-    return {"status": "AI Engine Active", "message": "Go to /docs to test"}
+def health_check():
+    return {"status": "online", "module": "Semantic & Data Modeling"}
 
-@app.post("/add_item")
-def add_item(item: ItemCreate):
-    engine.add_item(item.dict())
-    return {"message": "Item indexed successfully"}
-
-@app.post("/search", response_model=List[SearchResult])
-def search_items(query: SearchQuery):
-    results = engine.search(query.text, query.category)
-    return results
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
