@@ -1,22 +1,206 @@
 [
   {
-    "anchor": "Mage wallet eka nathi una", 
-    "positive": "Black leather wallet found near library"
+    "anchor": "Lost my black wallet with credit cards",
+    "positive": "Found a black leather wallet near the library containing several credit cards and ID"
   },
   {
-    "anchor": "Blue ID card", 
-    "positive": "Student ID card belonging to Kamal"
+    "anchor": "Mage kalu pata wallet eka nathi una credit card wallet eke thibbe",
+    "positive": "Black genuine leather bifold wallet found at bus stop with VISA card and national ID inside"
   },
   {
-    "anchor": "Rathu pata umbrella", 
-    "positive": "Red folding umbrella"
+    "anchor": "Brown wallet missing has my driving license",
+    "positive": "Brown leather wallet discovered in parking lot contains driving license and some cash"
   },
   {
-    "anchor": "Kalu pata bag eka", 
-    "positive": "Black laptop backpack"
+    "anchor": "Mata thamba wallet eka campus eke haruna driving license thibbe",
+    "positive": "Brown colored wallet with metal clasp found near fountain, has driving license and receipts"
   },
   {
-    "anchor": "Lost my 4n", 
-    "positive": "Samsung Galaxy mobile phone found in canteen"
+    "anchor": "Ladies purse red color lost near shopping mall",
+    "positive": "Red ladies wallet found at food court contains ATM cards lipstick and mirror"
+  },
+  {
+    "anchor": "Kanthawa purse eka rathu pata mall eke haruna ATM card thibbe",
+    "positive": "Red colored ladies purse wallet found at Majestic City with Commercial Bank ATM card inside"
+  },
+  {
+    "anchor": "Lost small blue wallet with student ID",
+    "positive": "Navy blue canvas wallet found contains student ID card gym membership and bus pass"
+  },
+  {
+    "anchor": "Mama student ID eka wallet eke thibbe nil pata wallet eka haruna",
+    "positive": "Blue fabric wallet discovered at park bench with university student ID and season ticket"
+  },
+  {
+    "anchor": "Expensive leather wallet missing has foreign currency",
+    "positive": "Premium dark blue leather wallet found near beach contains US dollars Euros and passport photos"
+  },
+  {
+    "anchor": "I lost my mobile phone black color",
+    "positive": "Black Samsung Galaxy smartphone found in canteen near the cashier counter"
+  },
+  {
+    "anchor": "Mata phone eka haruna kalu pata Samsung phone eka",
+    "positive": "Found black Samsung mobile phone at library table fully charged with cracked screen protector"
+  },
+  {
+    "anchor": "iPhone missing white color",
+    "positive": "White iPhone 12 found near main entrance with blue case and screen lock"
+  },
+  {
+    "anchor": "Apple phone eka sudu pata case ekak daala thibbe haruna",
+    "positive": "iPhone with white protective case discovered in lecture hall still has battery"
+  },
+  {
+    "anchor": "Lost my keys with car keychain",
+    "positive": "Car keys with Toyota keychain found on parking lot ground has 4 keys"
+  },
+  {
+    "anchor": "Mama motor car key eka haruna Toyota keychain eka thibbe",
+    "positive": "Set of keys found near security gate includes car key with Toyota logo and house keys"
+  },
+  {
+    "anchor": "Bunch of keys lost has blue keyring",
+    "positive": "Found multiple keys attached to blue colored keyring near bus stop"
+  },
+  {
+    "anchor": "Lost my backpack black color laptop inside",
+    "positive": "Black laptop backpack found in lecture hall contains Dell laptop and charger"
+  },
+  {
+    "anchor": "Kalu bag eka haruna laptop eka bag eke thibbe",
+    "positive": "Black backpack discovered at library with laptop computer and notebooks inside"
+  },
+  {
+    "anchor": "Red bag missing has my books",
+    "positive": "Red backpack found contains engineering textbooks and calculator"
+  },
+  {
+    "anchor": "Rathu pata bag eka poth thibbe eke",
+    "positive": "Red colored backpack with university books found near cafeteria"
+  },
+  {
+    "anchor": "Lost my glasses black frame",
+    "positive": "Black frame reading glasses found on desk with case"
+  },
+  {
+    "anchor": "Mama eye glass eka haruna kalu frame eka",
+    "positive": "Eyeglasses with black frame discovered in restroom prescription lenses"
+  },
+  {
+    "anchor": "Sunglasses missing brown color",
+    "positive": "Brown tinted sunglasses found near swimming pool with case"
+  },
+  {
+    "anchor": "Lost my umbrella red color",
+    "positive": "Red folding umbrella found at bus stop still in good condition"
+  },
+  {
+    "anchor": "Rathu umbrella eka haruna bus eke ahala enna thaenaka",
+    "positive": "Red colored umbrella discovered near bus stand large size with wooden handle"
+  },
+  {
+    "anchor": "Big black umbrella lost",
+    "positive": "Large black umbrella found near main gate automatic open close type"
+  },
+  {
+    "anchor": "Lost my water bottle blue steel bottle",
+    "positive": "Blue stainless steel water bottle found in gym near treadmill"
+  },
+  {
+    "anchor": "Gym eke water bottle eka haruna nil pata steel eka",
+    "positive": "Blue metal water bottle discovered at fitness center has stickers on it"
+  },
+  {
+    "anchor": "Lost my headphones Sony wireless",
+    "positive": "Sony wireless Bluetooth headphones found in library black color with case"
+  },
+  {
+    "anchor": "Headphone eka haruna Sony bluetooth headphone wireless eka",
+    "positive": "Black Sony wireless headphones discovered near computer lab still working"
+  },
+  {
+    "anchor": "Lost my watch silver color",
+    "positive": "Silver wrist watch found in restroom Casio brand with metal strap"
+  },
+  {
+    "anchor": "Watch eka haruna silver pata metal strap eka thibbe",
+    "positive": "Silver colored wristwatch found on sink has date display"
+  },
+  {
+    "anchor": "Smart watch missing black color",
+    "positive": "Black smart watch found near gym entrance looks like Apple Watch"
+  },
+  {
+    "anchor": "Lost my ID card student ID",
+    "positive": "University student ID card found on ground has photo and student number"
+  },
+  {
+    "anchor": "Student card eka haruna university eke ID eka photo eka thibbe",
+    "positive": "Student identification card from University of Colombo found near library entrance"
+  },
+  {
+    "anchor": "National ID card lost",
+    "positive": "National identity card found has NIC number and photo"
+  },
+  {
+    "anchor": "Lost my jacket black hoodie",
+    "positive": "Black hoodie jacket found in cafeteria size large with front pocket"
+  },
+  {
+    "anchor": "Jacket eka haruna kalu pata hoodie jacket eka",
+    "positive": "Black colored hooded jacket discovered on chair has zipper and Nike logo"
+  },
+  {
+    "anchor": "Blue jacket missing denim jacket",
+    "positive": "Blue denim jacket found near parking lot has buttons"
+  },
+  {
+    "anchor": "Lost my cap black baseball cap",
+    "positive": "Black baseball cap found has adjustable strap at back"
+  },
+  {
+    "anchor": "Hat eka haruna kalu pata cap eka",
+    "positive": "Black colored cap discovered near field has team logo"
+  },
+  {
+    "anchor": "Lost my notebook blue color",
+    "positive": "Blue spiral notebook found contains engineering notes and diagrams"
+  },
+  {
+    "anchor": "Note book eka haruna nil pata notes thibbe eke",
+    "positive": "Blue notebook with lecture notes discovered in classroom"
+  },
+  {
+    "anchor": "Lost my laptop charger Dell charger",
+    "positive": "Dell laptop charger found in library 65W adapter with cable"
+  },
+  {
+    "anchor": "Laptop charger eka haruna Dell laptop eke charger eka",
+    "positive": "Black Dell laptop power adapter discovered near computer lab with long cable"
+  },
+  {
+    "anchor": "Phone charger missing iPhone charger",
+    "positive": "White iPhone charging cable and adapter found near outlet"
+  },
+  {
+    "anchor": "Lost my earphones white color",
+    "positive": "White wired earphones found tangled has microphone"
+  },
+  {
+    "anchor": "Earphone eka haruna sudu pata wire eka thibbe",
+    "positive": "White colored earbuds discovered near canteen still working"
+  },
+  {
+    "anchor": "Lost my pen expensive pen",
+    "positive": "Expensive metal pen found Parker brand silver color"
+  },
+  {
+    "anchor": "Lost my calculator scientific calculator",
+    "positive": "Casio scientific calculator found near exam hall still has battery"
+  },
+  {
+    "anchor": "Calculator eka haruna scientific calculator eka exam hall eke",
+    "positive": "Scientific calculator discovered in classroom Casio brand with cover"
   }
 ]
