@@ -33,28 +33,37 @@ def search_items(
     semantic: SemanticEngine = Depends(get_semantic),
     modeling: DataModelingEngine = Depends(get_modeling)
 ):
-    """Search for a LOST item against all FOUND items in database using semantic matching"""
-    # 1. Semantic Search (Text -> Vector) - Find similar found items
-    raw_results = semantic.search(query.text, limit=query.limit if hasattr(query, 'limit') else 10)
-    
-    # Filter by category if provided
-    if query.category:
-        raw_results = [r for r in raw_results if r['item']['category'].lower() == query.category.lower()]
+    """Search for a LOST item against all FOUND items in database using advanced semantic matching"""
+    # 1. Semantic Search (Text -> Vector) with hybrid scoring - Find similar found items
+    raw_results = semantic.search(
+        query.text, 
+        limit=query.limit if hasattr(query, 'limit') else 10,
+        category_filter=query.category if query.category else None
+    )
     
     # 2. Data Modeling (Context Inference)
     context_suggestions = []
     if query.category:
         context_suggestions = modeling.get_context(query.category)
 
-    # 3. Format Response with similarity percentages
+    # 3. Format Response with detailed similarity metrics
     formatted_matches = []
     for res in raw_results:
+        # Build detailed reason with scoring breakdown
+        reason_parts = [f"Semantic Match: {res['details']['semantic']}%"]
+        if res['keyword_match'] > 0:
+            reason_parts.append(f"Keyword Match: {res['keyword_match']}%")
+        if res['details']['category_boost']:
+            reason_parts.append("Category Boost Applied")
+        
+        reason = " | ".join(reason_parts)
+        
         formatted_matches.append(MatchResult(
             id=res['item']['id'],
             description=res['item']['description'],
             category=res['item']['category'],
             score=res['semantic_score'],
-            reason="AI Semantic Vector Similarity"
+            reason=reason
         ))
 
     return SearchResponse(
