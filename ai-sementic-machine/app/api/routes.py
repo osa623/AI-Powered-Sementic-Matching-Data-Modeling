@@ -50,11 +50,14 @@ def search_items(
     formatted_matches = []
     for res in raw_results:
         # Build detailed reason with scoring breakdown
-        reason_parts = [f"Semantic Match: {res['details']['semantic']}%"]
-        if res['keyword_match'] > 0:
-            reason_parts.append(f"Keyword Match: {res['keyword_match']}%")
+        reason_parts = [
+            f"Raw Cosine: {res['raw_cosine_similarity']:.4f}",
+            f"Vector: {res['vector_score']}%",
+            f"Keyword: {res['keyword_score']}%",
+            f"Formula: {res['details']['formula']}"
+        ]
         if res['details']['category_boost']:
-            reason_parts.append("Category Boost Applied")
+            reason_parts.append("Category Boost: +5%")
         
         reason = " | ".join(reason_parts)
         

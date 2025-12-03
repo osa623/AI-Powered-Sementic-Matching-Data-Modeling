@@ -165,43 +165,65 @@ class SemanticEngine:
         
         return item_data['id']
     
-    async def load_from_mongodb(self):
-        """Load all items from MongoDB on startup"""
+    async def load_from_mongodb(self) -> int:
+        """Load all items from MongoDB on startup
+        
+        Returns:
+            int: Number of items loaded
+        """
         try:
             db = get_database()
             if db is None:
-                return
+                print("⚠️ MongoDB not available, skipping data load")
+                return 0
+            
+            # Verify database is actually responsive
+            try:
+                await db.command('ping')
+            except Exception as ping_error:
+                print(f"⚠️ MongoDB not responsive: {ping_error}")
+                return 0
             
             cursor = db.found_items.find().sort("created_at", 1)
             items = await cursor.to_list(length=None)
             
             if not items:
-                print("📭 No items found in MongoDB")
-                return
+                print("📭 No items found in MongoDB (empty database)")
+                return 0
             
             print(f"📥 Loading {len(items)} items from MongoDB...")
             
             # Clear existing data
-            self.index = faiss.IndexFlatL2(self.dimension)
+            self.index = faiss.IndexFlatIP(self.dimension)  # FIXED: Use IP for cosine similarity
             self.items_metadata = []
             
             # Rebuild index from MongoDB
-            for item in items:
-                vector = np.array(item['vector'], dtype=np.float32)
-                self.index.add(np.array([vector]))
-                
-                self.items_metadata.append({
-                    "id": item['item_id'],
-                    "description": item['description'],
-                    "category": item['category']
-                })
+            for idx, item in enumerate(items):
+                try:
+                    vector = np.array(item['vector'], dtype=np.float32)
+                    # Normalize vector for cosine similarity
+                    vector = vector / np.linalg.norm(vector)
+                    self.index.add(np.array([vector]))
+                    
+                    self.items_metadata.append({
+                        "id": item['item_id'],
+                        "description": item['description'],
+                        "category": item['category']
+                    })
+                except Exception as item_error:
+                    print(f"⚠️ Failed to load item {idx}: {item_error}")
+                    continue
             
             # Save to disk
             self._save_to_disk()
-            print(f"✅ Loaded {len(items)} items from MongoDB")
+            print(f"✅ Successfully loaded {len(self.items_metadata)} items from MongoDB")
+            return len(self.items_metadata)
             
         except Exception as e:
-            print(f"⚠️ Could not load from MongoDB: {e}")
+            print(f"❌ Critical error loading from MongoDB: {e}")
+            import traceback
+            traceback.print_exc()
+            return 0
 
     def _calculate_keyword_overlap(self, query: str, description: str) -> float:
         """Calculate keyword overlap score for hybrid ranking"""
@@ -219,33 +241,59 @@ class SemanticEngine:
     
     def _hybrid_score(self, semantic_score: float, keyword_score: float, 
                       category_match: bool = False) -> float:
-        """Combine multiple signals for better ranking"""
-        # Weighted combination - HEAVILY favor semantic similarity
-        # After fine-tuning, the model should be accurate enough
-        # to rely mostly on semantic understanding
+        """Weighted Hybrid Search: (Vector_Score * 0.7) + (Keyword_Score * 0.3)
         
-        # Semantic similarity is DOMINANT (90%)
-        # Keyword overlap is minor boost (5%)
-        # Category match provides small boost (5%)
+        This balanced approach prevents over-reliance on either signal:
+        - 70% semantic: Captures meaning and context
+        - 30% keyword: Ensures exact term matches get proper weight
         
-        combined = (semantic_score * 0.90 + 
-                   keyword_score * 0.05 + 
-                   (5.0 if category_match else 0.0))
+        Args:
+            semantic_score: Vector similarity score (0-100)
+            keyword_score: Keyword overlap score (0-100)
+            category_match: Whether categories match
+            
+        Returns:
+            Combined weighted score (0-100)
+        """
+        # WEIGHTED HYBRID SEARCH: 70% vector, 30% keyword
+        combined = (semantic_score * 0.70 + keyword_score * 0.30)
+        
+        # Category match provides small bonus (not part of 70/30 split)
+        if category_match:
+            combined = min(100.0, combined * 1.05)  # 5% boost
         
         return min(100.0, combined)
     
     def search(self, query_text: str, limit: int = 10, category_filter: str = None):
-        """Search for LOST item description against all FOUND items using advanced semantic matching"""
+        """Search for LOST item using Weighted Hybrid Search (70% vector + 30% keyword)
+        
+        Args:
+            query_text: Lost item description
+            limit: Maximum results to return
+            category_filter: Optional category to filter by
+            
+        Returns:
+            List of matched items with detailed scoring
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+        
         if len(self.items_metadata) == 0:
+            logger.warning("⚠️ Search attempted but index is empty")
             return []
+        
+        logger.info(f"🔍 Searching for: '{query_text}' (category: {category_filter or 'any'})")
         
         # Vectorize the LOST item description (normalized)
         query_vec = self.vectorize(query_text, normalize=True)
+        logger.debug(f"📊 Query vector shape: {query_vec.shape}, norm: {np.linalg.norm(query_vec):.4f}")
         
         # Search in FAISS index using cosine similarity
         # With IndexFlatIP and normalized vectors, higher score = more similar
         k = min(limit * 2, len(self.items_metadata))  # Get more candidates for re-ranking
         scores, indices = self.index.search(np.array([query_vec], dtype=np.float32), k)
+        
+        logger.info(f"📈 FAISS returned {len(indices[0])} candidates")
         
         results = []
         for i, idx in enumerate(indices[0]):
@@ -258,28 +306,14 @@ class SemanticEngine:
             if category_filter and metadata['category'].lower() != category_filter.lower():
                 continue
             
-            # Cosine similarity score (from inner product of normalized vectors)
-            # Range: [-1, 1], but typically [0, 1] for similar items
-            cosine_sim = float(scores[0][i])
+            # RAW COSINE SIMILARITY from FAISS (this is the vector math result)
+            raw_cosine_sim = float(scores[0][i])
             
-            # Convert to percentage (0-100%)
-            # For fine-tuned models, cosine typically ranges 0.3-1.0
-            # Map this range more aggressively to 0-100%
-            # This gives better score distribution after fine-tuning
-            if cosine_sim >= 0.7:
-                # High similarity: 70-100% → 80-100%
-                semantic_score = 80 + (cosine_sim - 0.7) * (20 / 0.3)
-            elif cosine_sim >= 0.5:
-                # Medium similarity: 50-70% → 60-80%
-                semantic_score = 60 + (cosine_sim - 0.5) * (20 / 0.2)
-            elif cosine_sim >= 0.3:
-                # Low similarity: 30-50% → 40-60%
-                semantic_score = 40 + (cosine_sim - 0.3) * (20 / 0.2)
-            else:
-                # Very low similarity: <30% → 0-40%
-                semantic_score = max(0, cosine_sim * (40 / 0.3))
-            
-            semantic_score = max(0, min(100, semantic_score))
+            # Convert to percentage (0-100%) with linear scaling
+            # Cosine similarity ranges from -1 to 1, but typically 0.2 to 1.0 for text
+            # We use linear scaling: (cosine + 1) / 2 * 100
+            # This preserves the mathematical relationships
+            semantic_score = max(0, min(100, ((raw_cosine_sim + 1) / 2) * 100))
             
             # Calculate keyword overlap for hybrid ranking
             keyword_score = self._calculate_keyword_overlap(query_text, metadata['description'])
@@ -289,23 +323,36 @@ class SemanticEngine:
             if category_filter:
                 category_match = metadata['category'].lower() == category_filter.lower()
             
-            # Calculate hybrid score
+            # WEIGHTED HYBRID SCORE: 70% semantic + 30% keyword
             final_score = self._hybrid_score(semantic_score, keyword_score, category_match)
+            
+            # DETAILED LOGGING: Show raw similarity scores
+            logger.info(
+                f"  Match #{i+1}: {metadata['id'][:20]}... | "
+                f"RAW_COSINE: {raw_cosine_sim:.4f} | "
+                f"VECTOR: {semantic_score:.1f}% | "
+                f"KEYWORD: {keyword_score:.1f}% | "
+                f"FINAL: {final_score:.1f}%"
+            )
             
             results.append({
                 "item": metadata,
                 "semantic_score": round(final_score, 2),
-                "cosine_similarity": round(cosine_sim, 4),
-                "keyword_match": round(keyword_score, 2),
+                "raw_cosine_similarity": round(raw_cosine_sim, 4),  # RAW score for debugging
+                "vector_score": round(semantic_score, 2),  # Converted to %
+                "keyword_score": round(keyword_score, 2),
                 "details": {
                     "semantic": round(semantic_score, 2),
                     "keyword": round(keyword_score, 2),
-                    "category_boost": category_match
+                    "category_boost": category_match,
+                    "formula": f"({semantic_score:.1f} * 0.7) + ({keyword_score:.1f} * 0.3)"
                 }
             })
         
         # Sort by hybrid score descending
         results.sort(key=lambda x: x['semantic_score'], reverse=True)
+        
+        logger.info(f"✅ Returning top {min(limit, len(results))} results")
         
         # Return top matches
         return results[:limit]
